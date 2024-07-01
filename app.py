@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "Bienvenue sur le Chatbot !"
+    return "POMPELOP"
 
 @app.route('/chatbot', methods=['POST'])
 def chatbot():
