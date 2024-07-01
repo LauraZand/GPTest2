@@ -5,7 +5,11 @@ import os
 app = Flask(__name__)
 
 # Charger le modèle de NLP
-nlp_model = pipeline('conversational', model="facebook/blenderbot-400M-distill")
+messages = [
+    {"role": "user", "content": "Who are you?"},
+]
+pipe = pipeline("text-generation", model="princeton-nlp/Llama-3-Instruct-8B-SimPO")
+pipe(messages)
 
 @app.route('/')
 def home():
@@ -17,10 +21,10 @@ def chatbot_response():
     user_input = data.get('message')
     
     # Générer une réponse à partir du modèle NLP
-    conversation = nlp_model(user_input)
-    response = conversation[0]['generated_responses'][0]
+    response = pipe(user_input, max_length=50, num_return_sequences=1)
+    generated_text = response[0]['generated_text']
     
-    return jsonify({"response": response})
+    return jsonify({"response": generated_text})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
