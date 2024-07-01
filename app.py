@@ -1,23 +1,22 @@
-from flask import Flask, request, jsonify, render_template
-import os
+from flask import Flask, request, jsonify
+from transformers import pipeline
 
 app = Flask(__name__)
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+# Charger le modèle de NLP
+nlp_model = pipeline('conversational', model="facebook/blenderbot-400M-distill")
 
 @app.route('/chatbot', methods=['POST'])
-def chatbot():
-    user_input = request.json.get("message")
-    # Implémente la logique du chatbot ici
-    response = generate_response(user_input)
+def chatbot_response():
+    data = request.json
+    user_input = data.get('message')
+    
+    # Générer une réponse à partir du modèle NLP
+    conversation = nlp_model(user_input)
+    response = conversation[0]['generated_text']
+    
     return jsonify({"response": response})
 
-def generate_response(user_input):
-    # Exemple de réponse simple
-    return "Ceci est une réponse générée par le chatbot."
-
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=5000)
+
