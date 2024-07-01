@@ -1,11 +1,11 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import os
 
 app = Flask(__name__)
 
 @app.route('/')
 def home():
-    return "POMPELOP"
+    return render_template('index.html')
 
 @app.route('/chatbot', methods=['POST'])
 def chatbot():
